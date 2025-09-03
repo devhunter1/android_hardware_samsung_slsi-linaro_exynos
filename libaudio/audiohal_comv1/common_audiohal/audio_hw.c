@@ -643,6 +643,8 @@ device_type get_device_id(struct audio_device *adev, audio_devices_t devices)
                 case AUDIO_DEVICE_OUT_BLUETOOTH_SCO:
                 case AUDIO_DEVICE_OUT_BLUETOOTH_SCO_HEADSET:
                 case AUDIO_DEVICE_OUT_BLUETOOTH_SCO_CARKIT:
+                    ret = DEVICE_BT_SCO_HEADSET;
+                    break;
                 case AUDIO_DEVICE_OUT_USB_HEADSET:
                 case AUDIO_DEVICE_OUT_USB_DEVICE:
                     ret = DEVICE_USB_HEADSET;
@@ -2846,6 +2848,17 @@ static int in_set_parameters(struct audio_stream *stream, const char *kvpairs)
     parms = str_parms_create_str(kvpairs);
 
     pthread_mutex_lock(&in->common.lock);
+    ret = str_parms_get_str(parms, AUDIO_PARAMETER_STREAM_INPUT_SOURCE, value, sizeof(value));
+    if (ret >= 0) {
+        unsigned int new_source = atoi(value);
+        if (in->requested_source == AUDIO_SOURCE_VOICE_RECOGNITION || new_source == AUDIO_SOURCE_VOICE_RECOGNITION) {
+            stop_active_input(in);
+            in->requested_source = new_source;
+            in->common.stream_usage = adev_get_capture_ausage(adev, in);
+            in->pcm_reconfig = true;
+        }
+    }
+
     ret = str_parms_get_str(parms, AUDIO_PARAMETER_STREAM_ROUTING, value, sizeof(value));
     if (ret >= 0) {
         audio_devices_t requested_devices = atoi(value);
@@ -4191,8 +4204,11 @@ static int adev_open_input_stream(
     in->common.stream_type = ASTREAM_NONE;
     in->common.stream_usage = AUSAGE_NONE;
 
-    if ((flags & AUDIO_INPUT_FLAG_FAST) != 0) {
-        if (isCallMode(adev) && config->sample_rate != LOW_LATENCY_CAPTURE_SAMPLE_RATE) {
+    if (isCallMode(adev)) {
+        if ((config->sample_rate == LOW_LATENCY_CAPTURE_SAMPLE_RATE) && ((flags & AUDIO_INPUT_FLAG_VOIP_TX) != 0)) {
+            flags = AUDIO_INPUT_FLAG_FAST;
+            ALOGD("device-%s: Low latency capture samplerate used without AUDIO_INPUT_FLAG_FAST during call mode. flags changed(%#x)", __func__, flags);
+        } else if ((config->sample_rate != LOW_LATENCY_CAPTURE_SAMPLE_RATE) && ((flags & AUDIO_INPUT_FLAG_FAST) != 0)) {
             flags &= ~AUDIO_INPUT_FLAG_FAST;
             flags |= AUDIO_INPUT_FLAG_VOIP_TX;
             ALOGD("device-%s: Denied to open Low Latency input. flags changed(%#x)", __func__, flags);

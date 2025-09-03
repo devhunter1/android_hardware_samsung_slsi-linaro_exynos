@@ -48,7 +48,7 @@ audio_cc_library_shared {
         "libprocessgroup",
         "libaudio-ril",
     ] + select(soong_config_variable("exynos_audio", "PROXY_LIBRARY"), {
-        any @ flag_val: [ flag_val ],
+        any @ flag_val: [flag_val],
         default: [],
     }),
 
@@ -57,33 +57,25 @@ audio_cc_library_shared {
     ],
 
     include_dirs: [
-        "hardware/samsung_slsi-linaro/exynos/include/libaudio/audiohal",
+        "hardware/samsung_slsi-linaro/exynos/include/libaudio/audiohal_comv1",
         "hardware/samsung_slsi-linaro/exynos/libaudio/audiohal_comv1/common_audiohal",
         "hardware/samsung_slsi-linaro/exynos/libaudio/audiohal_comv1/odm_specific",
         "system/media/audio_utils/include",
     ],
 
-    local_include_dirs: select(soong_config_variable("exynos_audio", "USE_SITRIL"), {
-        "true": [
-            "odm_specific/audioril-sit",
-            "odm_specific/audioril-sit/include",
-        ],
-        default: [
-            "odm_specific/audioril-sec",
-            "odm_specific/audioril-sec/include",
-        ],
-    }),
- 
-    srcs:[
+    local_include_dirs: [
+        "odm_specific/audioril-sec",
+        "odm_specific/audioril-sec/include",
+    ],
+
+    srcs: [
         "common_audiohal/audio_hw.c",
         "odm_specific/factory_manager.c",
         "odm_specific/audio_odm_impl.c",
-    ] + select(soong_config_variable("exynos_audio", "USE_SITRIL"), {
-        "true": [ "odm_specific/voice_manager_sit.c" ],
-        default: [ "odm_specific/voice_manager_sec.c" ],
-    }),
+        "odm_specific/voice_manager_sec.c",
+    ],
 
-  soong_config_variables: {
+    soong_config_variables: {
         target_board_platform: {
             name: "audio.primary.%s",
             conditions_default: {

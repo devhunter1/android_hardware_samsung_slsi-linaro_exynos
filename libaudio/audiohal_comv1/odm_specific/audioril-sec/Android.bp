@@ -1,0 +1,23 @@
+cc_library_shared {
+    name: "libaudio-ril",
+    proprietary: true,
+
+    shared_libs: [
+        "liblog",
+        "libcutils",
+        "libutils",
+        "libc",
+    ],
+
+    header_libs: [
+        "libhardware_headers",
+    ],
+
+    include_dirs: [
+        "hardware/samsung_slsi-linaro/exynos/include/libaudio/audiohal",
+    ],
+
+    local_include_dirs: ["include"],
+
+    srcs: ["secril_interface.c"],
+}
