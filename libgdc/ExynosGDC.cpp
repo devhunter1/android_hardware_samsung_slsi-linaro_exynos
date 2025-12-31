@@ -800,6 +800,16 @@ int ExynosGDC::m_getFormatInfo(int hal_pixel_format, uint32_t &v4l2_format, GDC_
         pixelSize = GDC_PIXEL_SIZE_10BIT;
         compression = GDC_COMP_LOSS;
         break;
+    case gdc_pixel_format::HAL_PIXEL_FORMAT_EXYNOS_420_SP_M_64_SBWC_L_FR:
+        v4l2_format = V4L2_PIX_FMT_NV12M_SBWCL_64_8B_FR;
+        pixelSize = GDC_PIXEL_SIZE_10BIT;
+        compression = GDC_COMP_LOSS;
+        break;
+    case gdc_pixel_format::HAL_PIXEL_FORMAT_EXYNOS_420_SP_M_10B_64_SBWC_L_FR:
+        v4l2_format = V4L2_PIX_FMT_NV12M_SBWCL_64_10B_FR;
+        pixelSize = GDC_PIXEL_SIZE_10BIT;
+        compression = GDC_COMP_LOSS;
+        break;
     }
 
     GDC_LOGV("compression(%d)", compression);

@@ -56,6 +56,14 @@
 #define V4L2_PIX_FMT_NV12N_SBWCL_64_10B   v4l2_fourcc('N', '1', 'L', '7')
 #endif
 
+/* 12 Y/CbCr 4:2:0 SBWC Lossy v2.8 64B align (footprint redunction mode) */
+#ifndef V4L2_PIX_FMT_NV12M_SBWCL_64_8B_FR
+#define V4L2_PIX_FMT_NV12M_SBWCL_64_8B_FR	v4l2_fourcc('M', '1', 'F', '8')
+#endif
+#ifndef V4L2_PIX_FMT_NV12M_SBWCL_64_10B_FR
+#define V4L2_PIX_FMT_NV12M_SBWCL_64_10B_FR	v4l2_fourcc('M', '1', 'F', '1')
+#endif
+
 /* for V4L2_CID_CAMERAPP_GDC_GRID_CONTROL */
 struct gdc_crop_param {
     uint32_t sensor_num;
@@ -106,6 +114,8 @@ enum class gdc_pixel_format : int {
     HAL_PIXEL_FORMAT_EXYNOS_420_SP_M_10B_64_SBWC_L      = 0x201,
     HAL_PIXEL_FORMAT_EXYNOS_420_SPN_10B_32_SBWC_L       = 0x210,
     HAL_PIXEL_FORMAT_EXYNOS_420_SPN_10B_64_SBWC_L       = 0x211,
+    HAL_PIXEL_FORMAT_EXYNOS_420_SP_M_64_SBWC_L_FR       = 0x212,
+    HAL_PIXEL_FORMAT_EXYNOS_420_SP_M_10B_64_SBWC_L_FR   = 0x213,
 };
 
 #endif //EXYNOS_GDC_H
