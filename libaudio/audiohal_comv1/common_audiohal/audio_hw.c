@@ -2997,21 +2997,18 @@ static int in_set_parameters(struct audio_stream *stream, const char *kvpairs)
     // Change Audio Input Source
     ret = str_parms_get_str(parms, AUDIO_PARAMETER_STREAM_INPUT_SOURCE, value, sizeof(value));
     if (ret >= 0) {
-        if (in->common.stream_status > STATUS_READY)
-            goto not_acceptable;
-        else {
-            unsigned int new_source = (unsigned int)atoi(value);
-            if ((new_source != in->requested_source) && (new_source != AUDIO_SOURCE_DEFAULT)) {
-                in->requested_source = new_source;
+        unsigned int new_source = (unsigned int)atoi(value);
+        if ((new_source != in->requested_source) && (new_source != AUDIO_SOURCE_DEFAULT)) {
+            in->requested_source = new_source;
 
-                if (in->requested_source == AUDIO_SOURCE_VOICE_CALL) {
-                    in->common.stream_usage = adev_get_capture_ausage(adev, in);
-                    proxy_update_capture_usage((void *)(in->common.proxy_stream),(int)in->common.stream_usage);
-                }
-                ALOGD("%s-%s: changed source to %d from %d ", stream_table[in->common.stream_type],
+            if (in->requested_source == AUDIO_SOURCE_VOICE_CALL) {
+                in->common.stream_usage = adev_get_capture_ausage(adev, in);
+                proxy_update_capture_usage((void *)(in->common.proxy_stream),(int)in->common.stream_usage);
+            }
+            ALOGD("%s-%s: changed source to %d from %d ", stream_table[in->common.stream_type],
                                                        __func__, new_source, in->requested_source);
-            } else
-                ALOGD("%s-%s: requested to change same source to %d",
+        } else {
+            ALOGD("%s-%s: requested to change same source to %d",
                                       stream_table[in->common.stream_type], __func__, new_source);
         }
     }
